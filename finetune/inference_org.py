@@ -22,6 +22,7 @@ from transformers import BartTokenizer
 
 from utils.handle_data import RAW_DIR, save_csv
 from finetune import finetune_org
+from finetune_org import FinetuneTransformer
 # from finetune import FinetuneTransformer
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformer'
