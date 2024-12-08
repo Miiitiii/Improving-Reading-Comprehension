@@ -22,7 +22,7 @@ from transformers import BartTokenizer
 
 from utils.handle_data import RAW_DIR, save_csv
 from finetune import finetune_org
-from finetune_org import FinetuneTransformer
+# from finetune_org import FinetuneTransformer
 # from finetune import FinetuneTransformer
 
 os.environ['WANDB_NOTEBOOK_NAME'] = 'FinetuneTransformer'
@@ -289,7 +289,7 @@ if __name__=='__main__':
 
     print('ckpt_file', ckpt_file)
     # model_pl = FinetuneTransformer(model_type = args.model_type, model_name = args.model_name)
-    model = FinetuneTransformer.load_from_checkpoint(ckpt_file, model_type = args.model_type).model.to(device)
+    model = finetune_org.FinetuneTransformer.load_from_checkpoint(ckpt_file, model_type = args.model_type).model.to(device)
     print('Successfully loaded the saved checkpoint!')
 
     force_tokens = ['?']
