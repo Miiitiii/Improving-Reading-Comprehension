@@ -242,6 +242,7 @@ if __name__=='__main__':
     args = add_params()
 
     test_file = os.path.join('./data', args.eval_folder, args.eval_filename)
+    print(test_file)
     
     test_data = []
     with open(test_file, 'r') as infile:
@@ -279,6 +280,7 @@ if __name__=='__main__':
     # Load the Generative Head 
     # search for ckpt file
     search_dir = os.path.join('./finetune', args.checkpoint_folder, args.run_name)
+    print(search_dir)
     for file in os.listdir(search_dir):
         name, ext = os.path.splitext(file)
         if ext == '.ckpt':
