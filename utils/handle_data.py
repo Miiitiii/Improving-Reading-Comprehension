@@ -9,7 +9,7 @@ import pandas as pd
 import os
 import numpy as np
 
-RAW_DIR = "./data/"
+RAW_DIR = "/kaggle/working/Improving-Reading-Comprehension/data/"
 
 def load_df(filename, folder, nrows=None):
     filename = os.path.join(folder, filename)
