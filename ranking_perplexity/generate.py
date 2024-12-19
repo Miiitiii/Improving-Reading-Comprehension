@@ -37,7 +37,12 @@ def add_params():
     parser.add_argument('-D', '--debug', action='store_true', help='Debug mode evaluating on a small subset of 5 samples')
     parser.add_argument('-S', '--seeds', default="37", type=str, help='Random seed') 
     parser.add_argument('-TO', '--top_one', action=argparse.BooleanOptionalAction, help='Get top one based on perplexity')
-    
+
+
+    parser.add_argument('-CONT' , '--content', default="nothing", type=str, help='The content for single input')
+    parser.add_argument('-QUS' , '--question', default="nothing", type=str, help='The question for single input')
+    parser.add_argument('-ANS' , '--answer', default="nothing", type=str, help='The answer for single input')
+
     params = parser.parse_args()
     
     return params
@@ -58,8 +63,18 @@ def load_data(args, test_data, tokenizer):
     test_dataloader = get_dataloader(args.batch_size, test_dataset, datatype='val')
     return test_dataloader
 
+# def load_data(args, tokenizer):
+#     # Prepare dataloader
+#     test_story, test_answer, test_question = args.content , args.question , args.answer
+#     test_inps = construct_transformer_input_old_vary(test_story, test_answer)
+#     test_input_ids, test_attention_mask, test_labels = get_transformer_encoding(tokenizer, test_inps, test_question)
+#     test_dataset = FairyDataset(test_input_ids, test_attention_mask, test_labels)
+#     test_dataloader = get_dataloader(args.batch_size, test_dataset, datatype='val')
+#     return test_dataloader
+
+
 def load_model(args, device):
-    search_dir = os.path.join('./finetune', args.checkpoint_folder, args.run_name)
+    search_dir = args.checkpoint_folder
     for file in os.listdir(search_dir):
         name, ext = os.path.splitext(file)
         if ext == '.ckpt':
@@ -154,18 +169,30 @@ def main():
     set_random_seed(seed = 37)
     args = add_params() 
 
-    test_file = os.path.join('./data', args.eval_filename)
+    if args.content == 'nothing':
+        test_file = args.eval_filename
 
-    # Load test data
-    test_data = []
-    with open(test_file, 'r') as infile:
-        for i, line in enumerate(infile):
-            if args.debug and i > 5:
-                break # choose only 5 in the case of debug
-            json_dict = json.loads(line)
-            json_dict['pairID'] = i+1
-            test_data.append(json_dict)
-    test_df = pd.DataFrame(test_data)
+        # Load test data
+        test_data = []
+        with open(test_file, 'r') as infile:
+            for i, line in enumerate(infile):
+                if args.debug and i > 5:
+                    break # choose only 5 in the case of debug
+                json_dict = json.loads(line)
+                json_dict['pairID'] = i+1
+                test_data.append(json_dict)
+        test_df = pd.DataFrame(test_data)
+    else:
+        test_data = []
+        data = {}
+        data['content'] = args.content
+        data['answer'] = args.answer
+        data['question'] = args.question
+        test_data.append(data)
+        
+        # Creating a DataFrame
+        test_df = pd.DataFrame(test_data)
+
 
     output_path = os.path.join(RAW_DIR, "results_rank")
     if args.decoding_strategies == 'N':
